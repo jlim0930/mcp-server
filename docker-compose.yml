@@ -7,6 +7,10 @@ services:
     environment:
       # Pass your comma-separated list of documentation sites here
       - DOC_SITES=https://docs.example.com,https://api.example.com
+      # Control the throttling between requests in seconds (default: 1.0)
+      - CRAWL_DELAY=1.0
+      # How often the server should automatically re-crawl in hours (default: 168.0)
+      - REFRESH_INTERVAL_HOURS=168.0
     volumes:
       # This maps a local folder to the container's DB path for persistent indexing
       - ./mcp_data:/app/chroma_db
