@@ -21,8 +21,14 @@ A standalone Model Context Protocol (MCP) server that indexes documentation site
 ## Configuration
 The server uses the `DOC_SITES` environment variable to define which sites to index. This should be a comma-separated list of URLs. The server will automatically begin crawling and indexing these sites as a background process as soon as it starts up.
 
+You can also use the following optional environment variables:
+- `CRAWL_DELAY`: Control the throttling between requests (default is `1.0` seconds) to prevent overloading the target web servers during the recursive crawl.
+- `REFRESH_INTERVAL_HOURS`: How often the server should automatically re-crawl the sites to pick up updates (default is `168.0` hours, which is once a week). Set to `0` to disable automatic background refreshing.
+
 Example:
 `DOC_SITES=https://docs.example.com,https://api.example.com`
+`CRAWL_DELAY=2.0`
+`REFRESH_INTERVAL_HOURS=12`
 
 ## Setup & Installation
 
