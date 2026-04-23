@@ -22,11 +22,23 @@ Example:
 
 ### Option 1: Docker (Recommended)
 1. Configure your sites in `docker-compose.yml`.
-2. Run the server:
+2. Build and run the server:
    ```bash
-   docker-compose up -d
+   docker-compose up -d --build
    ```
    The server will be available via SSE at `http://localhost:8888/sse`.
+
+3. **View logs:**
+   To monitor the server and see indexing progress:
+   ```bash
+   docker-compose logs -f
+   ```
+
+4. **Shut down:**
+   To stop and remove the container:
+   ```bash
+   docker-compose down
+   ```
 
 ### Option 2: Manual Installation
 1. Install dependencies:
