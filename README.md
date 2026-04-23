@@ -2,6 +2,12 @@
 
 A standalone Model Context Protocol (MCP) server that indexes documentation sites and provides a searchable vector store for LLMs.
 
+## Use Cases
+- **Internal Knowledge Base**: Index and search your company's internal documentation, wikis, or private GitHub repositories to provide LLMs with private context.
+- **API Reference & Documentation**: Quickly crawl and index technical documentation for new libraries or frameworks to assist with coding tasks.
+- **Specialized Research**: Create a searchable vector store for niche knowledge sites, medical papers, or legal documents.
+- **Offline Access**: Maintain a local, searchable copy of frequently used documentation for use in environments with restricted internet access.
+
 ## Features
 - **FastMCP**: High-performance MCP implementation.
 - **Crawl4AI**: Automatically crawls and converts websites into LLM-friendly Markdown.
@@ -87,16 +93,14 @@ Add the following to your `claude_desktop_config.json`:
 ```
 
 ### Gemini CLI
-Update your `~/.gemini/config.json` with the following configuration:
+Update your `~/.gemini/settings.json` with the following configuration:
 
 **Using Docker (SSE):**
 ```json
 {
-  "mcp": {
-    "servers": {
-      "mcp-docs-server": {
-        "url": "http://localhost:8888/sse"
-      }
+  "mcpServers": {
+    "mcp-docs-server": {
+      "url": "http://localhost:8888/sse"
     }
   }
 }
@@ -105,14 +109,12 @@ Update your `~/.gemini/config.json` with the following configuration:
 **Using stdio (Manual):**
 ```json
 {
-  "mcp": {
-    "servers": {
-      "mcp-docs-server": {
-        "command": "python",
-        "args": ["/path/to/mcp-server/server.py"],
-        "env": {
-          "DOC_SITES": "https://docs.example.com"
-        }
+  "mcpServers": {
+    "mcp-docs-server": {
+      "command": "python",
+      "args": ["/path/to/mcp-server/server.py"],
+      "env": {
+        "DOC_SITES": "https://docs.example.com"
       }
     }
   }
