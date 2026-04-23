@@ -1,0 +1,6 @@
+# Ignore ChromaDB database
+mcp_data/chroma.sqlite3
+mcp_data/
+__pycache__/
+*.pyc
+.env
