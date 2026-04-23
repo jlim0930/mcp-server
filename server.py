@@ -2,14 +2,11 @@ import os
 import asyncio
 from typing import List
 from fastmcp import FastMCP
+from fastmcp.server.lifespan import lifespan
 from crawl4ai import AsyncWebCrawler
 import chromadb
 
-# 1. Initialize FastMCP with HTTP transport
-# We use host 0.0.0.0 so it is accessible outside the Docker container
-mcp = FastMCP("RemoteDocIndexer")
-
-# 2. Setup ChromaDB (Local & Persistent)
+# 1. Setup ChromaDB (Local & Persistent)
 # By default, ChromaDB uses 'all-MiniLM-L6-v2' embeddings locally.
 # No API keys are required for this setup.
 DB_PATH = "./chroma_db"
@@ -23,14 +20,14 @@ def get_target_sites() -> List[str]:
         return []
     return [s.strip() for s in sites_str.split(",") if s.strip()]
 
-@mcp.tool()
-async def index_configured_sites():
+async def run_indexing():
     """
-    Crawls the sites defined in the DOC_SITES env var and
-    stores them in the local vector database.
+    Core logic for crawling and indexing sites.
+    Shared by the tool and the automatic startup process.
     """
     sites = get_target_sites()
     if not sites:
+        print("Indexing skipped: No sites found in DOC_SITES.")
         return "Error: No sites found in DOC_SITES environment variable."
 
     results_summary = []
@@ -53,7 +50,36 @@ async def index_configured_sites():
             else:
                 results_summary.append(f"❌ Failed: {site} ({result.error_message})")
 
-    return "\n".join(results_summary)
+    summary = "\n".join(results_summary)
+    print(f"Indexing complete:\n{summary}")
+    return summary
+
+# 2. Define Lifespan for Automatic Indexing on Startup
+# Note: FastMCP 3.0+ uses this pattern for lifecycle events.
+@lifespan
+async def app_lifespan(server: FastMCP):
+    """
+    Automatically trigger indexing when the server starts.
+    We run it in the background to avoid blocking server startup.
+    """
+    sites = get_target_sites()
+    if sites:
+        print(f"Auto-indexing started for: {', '.join(sites)}")
+        # Run in background to not block server from accepting requests
+        asyncio.create_task(run_indexing())
+    
+    yield  # Server runs here
+
+# 3. Initialize FastMCP
+mcp = FastMCP("RemoteDocIndexer", lifespan=app_lifespan)
+
+@mcp.tool()
+async def index_configured_sites():
+    """
+    Crawls the sites defined in the DOC_SITES env var and
+    stores them in the local vector database.
+    """
+    return await run_indexing()
 
 @mcp.tool()
 async def search_docs(query: str):

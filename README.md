@@ -19,7 +19,7 @@ A standalone Model Context Protocol (MCP) server that indexes documentation site
 - Python 3.11+ (If running manually)
 
 ## Configuration
-The server uses the `DOC_SITES` environment variable to define which sites to index. This should be a comma-separated list of URLs.
+The server uses the `DOC_SITES` environment variable to define which sites to index. This should be a comma-separated list of URLs. The server will automatically begin crawling and indexing these sites as a background process as soon as it starts up.
 
 Example:
 `DOC_SITES=https://docs.example.com,https://api.example.com`
@@ -32,7 +32,7 @@ Example:
    ```bash
    docker-compose up -d --build
    ```
-   The server will be available via SSE at `http://localhost:8888/sse`.
+   The server will immediately begin indexing your configured sites in the background. It will be available via SSE at `http://localhost:8888/sse`.
 
 3. **View logs:**
    To monitor the server and see indexing progress:
@@ -57,7 +57,7 @@ Example:
    ```bash
    export DOC_SITES=https://docs.example.com
    ```
-3. Run the server:
+3. Run the server (auto-indexing will begin immediately):
    - For `stdio` (default): `python server.py`
    - For `sse`: `python server.py sse`
 
@@ -145,6 +145,8 @@ claude mcp add mcp-docs-server python /path/to/mcp-server/server.py
 Most clients support either `stdio` (command-based) or `sse` (URL-based). Follow the client's documentation for adding an MCP server using one of these methods.
 
 ## Using the Server
-Once connected, you can use the following tools:
-- `index_configured_sites`: Crawls the sites defined in `DOC_SITES` and stores them in the vector database.
+**Auto-Indexing:** The server automatically runs an indexing job in the background every time it starts up, reading the URLs provided in the `DOC_SITES` environment variable.
+
+Once connected to your client, you can use the following tools:
 - `search_docs`: Searches the indexed documentation for relevant snippets based on a query.
+- `index_configured_sites`: Manually trigger a re-crawl of the sites defined in `DOC_SITES` (useful if documentation has changed while the server is running).
