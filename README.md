@@ -86,6 +86,52 @@ Add the following to your `claude_desktop_config.json`:
 }
 ```
 
+### Gemini CLI
+Update your `~/.gemini/config.json` with the following configuration:
+
+**Using Docker (SSE):**
+```json
+{
+  "mcp": {
+    "servers": {
+      "mcp-docs-server": {
+        "url": "http://localhost:8888/sse"
+      }
+    }
+  }
+}
+```
+
+**Using stdio (Manual):**
+```json
+{
+  "mcp": {
+    "servers": {
+      "mcp-docs-server": {
+        "command": "python",
+        "args": ["/path/to/mcp-server/server.py"],
+        "env": {
+          "DOC_SITES": "https://docs.example.com"
+        }
+      }
+    }
+  }
+}
+```
+
+### Claude CLI (`claude-code`)
+You can add the server using the `claude mcp add` command.
+
+**Using Docker (SSE):**
+```bash
+claude mcp add mcp-docs-server http://localhost:8888/sse
+```
+
+**Using stdio (Manual):**
+```bash
+claude mcp add mcp-docs-server python /path/to/mcp-server/server.py
+```
+
 ### Cursor
 1. Go to **Settings > Cursor Settings > Features > MCP Servers**.
 2. Click **+ Add New MCP Server**.
