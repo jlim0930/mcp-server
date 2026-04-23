@@ -32,6 +32,8 @@ Example:
 
 ## Setup & Installation
 
+> ⚠️ **Warning**: The MCP server's database size can become quite large, and the initial crawl of the listed documentation sites can take a significant amount of time depending on the volume of content.
+
 ### Option 1: Docker (Recommended)
 1. Configure your sites in `docker-compose.yml`.
 2. Build and run the server:
